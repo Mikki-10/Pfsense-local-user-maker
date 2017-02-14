@@ -10,9 +10,9 @@ ini_set("display_errors", true);
 
 include "funktioner.php";
 
-if (isset($_POST)) 
+if ($_POST != NULL) 
 {
-	//Modtag indput
+    //Modtag indput
 	//Behandel
 		//Mangler nogle input
 			//Vis tart GUI

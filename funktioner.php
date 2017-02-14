@@ -139,6 +139,10 @@ function post_user($ip)
 function vis_gui()
 {
 	?>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
+	<link rel="stylesheet" type="text/css" href="/user-maker/css/simple.css">
+	<?php
+	/*
 	<form action="" method="post">
 		Server:<br>
 		<input type="text" name="server" placeholder="Indtast ip eller domæne"><br>
@@ -148,11 +152,55 @@ function vis_gui()
 		<input type="password" name="password" placeholder="pfsense admin password"><br>
 		Username prefix:<br>
 		<input type="text" name="prefix" placeholder="Prefix f.eks tgvlan -> tgvlan1, tgvlan2"><br>
-		Slet brugere før opret <input type="checkbox" name="delete-users">
-		(Som standard bibeholdes brugere oprettet)
-		Tilføj password til kommentar <input type="checkbox" checked name="delete-users">
+		<input type="checkbox" name="delete-users">Slet brugere før opret<br>
+		(Som standard bibeholdes brugere oprettet)<br>
+		<input type="checkbox" checked name="delete-users">Tilføj password til kommentar<br>
 		(Som standard skrivers brugens kode i kommentar feldet)
 	</form>
+	*/
+	?>
+
+	<div>
+		<form class="pure-form pure-form-aligned">
+		    <fieldset>
+		    	<div class="pure-control-group">
+		            <label for="server">Server</label>
+		            <input id="server" type="text" placeholder="Type server ip or domain">
+		            <span class="pure-form-message-inline">This is a required field.</span>
+		        </div>
+
+		        <div class="pure-control-group">
+		            <label for="name">Username</label>
+		            <input id="name" type="text" placeholder="Username">
+		            <span class="pure-form-message-inline">This is a required field.</span>
+		        </div>
+
+		        <div class="pure-control-group">
+		            <label for="password">Password</label>
+		            <input id="password" type="password" placeholder="Password">
+		            <span class="pure-form-message-inline">This is a required field.</span>
+		        </div>
+
+		        <div class="pure-control-group">
+		            <label for="prefix">Prefix</label>
+		            <input id="prefix" type="text" placeholder="Add username prefix e.g. tgvlan">
+		            <span class="pure-form-message-inline">This is a required field.</span>
+		        </div>
+
+		        <div class="pure-controls">
+		            <label for="cb" class="pure-checkbox">
+		                <input id="cb" type="checkbox"> I've read the terms and conditions
+		            </label>
+
+		            <label for="cb" class="pure-checkbox">
+		                <input id="cb" type="checkbox"> I've read the terms and conditions
+		            </label>
+
+		            <button type="submit" class="pure-button pure-button-primary">Submit</button>
+		        </div>
+		    </fieldset>
+		</form>
+	</div>
 	<?php
 }
 
