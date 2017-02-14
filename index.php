@@ -20,7 +20,7 @@ if (isset($_POST))
 }
 else
 {
-	//Vis start GUI
+	vis_gui();
 }
 
 

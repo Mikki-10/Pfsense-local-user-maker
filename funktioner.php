@@ -133,6 +133,29 @@ function post_user($ip)
     var_dump($html);
 }
 
+// --------------------------------------------------------- //
+// Vis GUI
+// --------------------------------------------------------- //
+function vis_gui()
+{
+	?>
+	<form action="" method="post">
+		Server:<br>
+		<input type="text" name="server" placeholder="Indtast ip eller domæne"><br>
+		Username:<br>
+		<input type="text" name="username" placeholder="pfsense admin username"><br>
+		Password:<br>
+		<input type="password" name="password" placeholder="pfsense admin password"><br>
+		Username prefix:<br>
+		<input type="text" name="prefix" placeholder="Prefix f.eks tgvlan -> tgvlan1, tgvlan2"><br>
+		Slet brugere før opret <input type="checkbox" name="delete-users">
+		(Som standard bibeholdes brugere oprettet)
+		Tilføj password til kommentar <input type="checkbox" checked name="delete-users">
+		(Som standard skrivers brugens kode i kommentar feldet)
+	</form>
+	<?php
+}
+
 
 // --------------------------------------------------------- //
 // Funktion til at gemme kun den data man har behov for
