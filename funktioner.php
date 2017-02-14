@@ -5,203 +5,209 @@
 // --------------------------------------------------------- //
 
 
+/**
+* 
+*/
+class pfsense
+{
+	function __construct()
+	{
+		$this->ch = curl_init();
+	}
+
+	function login($server, $username, $password)
+	{
+	    //login form action url
+	    $url="https://". $server ."/index.php";
+
+	    //set the directory for the webpage
+	    $dir = dirname(__FILE__);
+
+	    //set the directory for the cookie using defined document root var
+	    //set in config.php
+	    GLOBAL $cookie_file_path;
+
+	    // Hvad vil du have retur?
+	    //curl_setopt($ch, CURLOPT_HEADER, false);
+	    //curl_setopt($ch, CURLOPT_URL, $url);
+
+	    // Verificer SSL-certifikat?
+	    curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0);
+	    curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+	    // Hvilken fil skal vi gemme cookies i?
+	    curl_setopt($this->ch, CURLOPT_COOKIEJAR, $cookie_file_path);
+	    curl_setopt($this->ch, CURLOPT_COOKIEFILE, $cookie_file_path );
+
+	    // Drop det her
+	    //set the cookie the site has for certain features, this is optional
+	    //curl_setopt($this->ch, CURLOPT_COOKIE, "cookiename=0");
+
+	    // Set browser
+	    curl_setopt($this->ch, CURLOPT_USERAGENT,
+	        "Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.12) Gecko/20050915 Firefox/1.0.7");
+
+	    // Skal curl_exec() returnerer indholdet eller printe det?
+	    curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+	    curl_setopt($this->ch,CURLOPT_HTTPHEADER,array("Expect:  "));
+	    // Hvis vi modtager en header("Location: http://www.bla.dk")
+	    curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, 1);
+
+	    curl_setopt($this->ch, CURLOPT_URL,$url);
+	    $result=curl_exec($this->ch);
+	    $ting = htmlentities($result);
+
+	    //Tag kun csrf keyen
+	    $getcsrf = scrape_between($result, "<input type='hidden' name='__csrf_magic' value=\"", '" />');
+	    //var_dump($getcsrf);
+	    //$getcsrf = urlencode($getcsrf);
+	    if ($getcsrf == Null || $getcsrf == "") 
+	    {
+	        //Gør intet hvis den er logget ind.
+	    }
+	    else
+	    {
+	        //curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "POST");
+	        curl_setopt($this->ch, CURLOPT_POST, 1);
+
+	        $postinfo = "usernamefld=".$username."&passwordfld=".$password."&__csrf_magic=".$getcsrf;
+	        $postinfo = array(
+	                'usernamefld'  =>  $username,
+	                'passwordfld' => $password,
+	                '__csrf_magic'  => $getcsrf,
+	                'login' => "Login"
+	            );
+
+	        //curl_setopt($this->ch, CURLOPT_REFERER, $_SERVER['REQUEST_URI']);
+	        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $postinfo);
+	        $html = curl_exec($this->ch);
+	    }
+	}
+	   
+
+
+	// --------------------------------------------------------- //
+	// Funktion til at hente grafer
+	// --------------------------------------------------------- //
+	function make_user($server, $prefix, $password_as_comment = "false")
+	{
+	    //set the directory for the webpage
+	    $dir = dirname(__FILE__);
+
+	    //set the directory for the cookie using defined document root var
+	    //set in config.php
+	    GLOBAL $cookie_file_path;
+
+	    //Find real url
+	    $url = "https://". $server ."/user.php";
+
+	    // Hvad vil du have retur?
+	    //curl_setopt($this->ch, CURLOPT_HEADER, false);
+	    //curl_setopt($this->ch, CURLOPT_URL, $url);
+
+	    // Verificer SSL-certifikat?
+	    curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0);
+	    curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+	    // Hvilken fil skal vi gemme cookies i?
+	    curl_setopt($this->ch, CURLOPT_COOKIEJAR, $cookie_file_path);
+	    curl_setopt($this->ch, CURLOPT_COOKIEFILE, $cookie_file_path );
+
+
+	    // Drop det her
+	    //set the cookie the site has for certain features, this is optional
+	    //curl_setopt($this->ch, CURLOPT_COOKIE, "cookiename=0");
+
+	    // Set browser
+	    GLOBAL $user_agent;
+	    curl_setopt($this->ch, CURLOPT_USERAGENT,
+	        "Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.12) Gecko/20050915 Firefox/1.0.7");
+
+	    // Skal curl_exec() returnerer indholdet eller printe det?
+	    curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+	    curl_setopt($this->ch,CURLOPT_HTTPHEADER,array("Expect:  "));
+	    // Hvis vi modtager en header("Location: http://www.bla.dk")
+	    curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, 1);
+
+	    curl_setopt($this->ch, CURLOPT_POST, 0);
+	    //page with the content I want to grab
+	    curl_setopt($this->ch, CURLOPT_URL, $url);
+	    //do stuff with the info with DomDocument() etc
+	    $html = curl_exec($this->ch);
+	    curl_close($this->ch);
+	     
+	    //var_dump($html);
+	}
+}
 
 // --------------------------------------------------------- //
 // Funktion til at logge ind
 // --------------------------------------------------------- //
-function login($ip, $username, $password)
+
+/**
+* 
+*/
+class gui
 {
-    //login form action url
-    $url="https://". $ip ."/index.php";
+	
+	function __construct()
+	{
+		# code...
+	}
 
-    //set the directory for the webpage
-    $dir = dirname(__FILE__);
+	// --------------------------------------------------------- //
+	// Vis GUI
+	// --------------------------------------------------------- //
+	function show_form()
+	{
+		?>
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
+		<link rel="stylesheet" type="text/css" href="/user-maker/css/simple.css">
+		<div class="Aligner">
+			<div class="Aligner-item">
+				<form class="pure-form pure-form-aligned" method="post">
+				    <fieldset>
+				    	<div class="pure-control-group">
+				            <label for="server">Server</label>
+				            <input name="server" id="server" type="text" placeholder="Type server ip or domain" required>
+				            <!--<span class="pure-form-message-inline">This is a required field.</span>-->
+				        </div>
 
-    //set the directory for the cookie using defined document root var
-    $cookie_file_path = "C://temp/cookie-".$ip.".txt";
+				        <div class="pure-control-group">
+				            <label for="username">Username</label>
+				            <input name="username" id="username" type="text" placeholder="Username" required>
+				            <!--<span class="pure-form-message-inline">This is a required field.</span>-->
+				        </div>
 
+				        <div class="pure-control-group">
+				            <label for="password">Password</label>
+				            <input name="password" id="password" type="password" placeholder="Password" required>
+				            <!--<span class="pure-form-message-inline">This is a required field.</span>-->
+				        </div>
 
-    $ch = curl_init();
+				        <div class="pure-control-group">
+				            <label for="prefix">Prefix</label>
+				            <input name="prefix" id="prefix" type="text" placeholder="username prefix e.g. tgvlan" required>
+				            <!--<span class="pure-form-message-inline">This is a required field.</span>-->
+				        </div>
 
-    // Hvad vil du have retur?
-    //curl_setopt($ch, CURLOPT_HEADER, false);
-    //curl_setopt($ch, CURLOPT_URL, $url);
+				        <div class="pure-controls">
+				            <label for="cb" class="pure-checkbox">
+				                <input name="delete-users" id="cb" type="checkbox"> Delete ALL local users
+				            </label>
 
-    // Verificer SSL-certifikat?
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+				            <label for="cb" class="pure-checkbox">
+				                <input name="password-as-comment" id="cb" type="checkbox" checked> Add user password as comment
+				            </label>
 
-    // Hvilken fil skal vi gemme cookies i?
-    curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file_path);
-    curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file_path );
-
-    // Drop det her
-    //set the cookie the site has for certain features, this is optional
-    //curl_setopt($ch, CURLOPT_COOKIE, "cookiename=0");
-
-    // Set browser
-    curl_setopt($ch, CURLOPT_USERAGENT,
-        "Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.12) Gecko/20050915 Firefox/1.0.7");
-
-    // Skal curl_exec() returnerer indholdet eller printe det?
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch,CURLOPT_HTTPHEADER,array("Expect:  "));
-    // Hvis vi modtager en header("Location: http://www.bla.dk")
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-
-    curl_setopt($ch, CURLOPT_URL,$url);
-    $result=curl_exec($ch);
-    $ting = htmlentities($result);
-
-    //Tag kun csrf keyen
-    $getcsrf = scrape_between($result, "<input type='hidden' name='__csrf_magic' value=\"", '" />');
-    //var_dump($getcsrf);
-    //$getcsrf = urlencode($getcsrf);
-    if ($getcsrf == Null || $getcsrf == "") 
-    {
-        //Gør intet hvis den er logget ind.
-    }
-    else
-    {
-        //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POST, 1);
-
-        $postinfo = "usernamefld=".$username."&passwordfld=".$password."&__csrf_magic=".$getcsrf;
-        $postinfo = array(
-                'usernamefld'  =>  $username,
-                'passwordfld' => $password,
-                '__csrf_magic'  => $getcsrf,
-                'login' => "Login"
-            );
-
-        //curl_setopt($ch, CURLOPT_REFERER, $_SERVER['REQUEST_URI']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postinfo);
-        $html = curl_exec($ch);
-    }
-}
-   
-
-
-// --------------------------------------------------------- //
-// Funktion til at hente grafer
-// --------------------------------------------------------- //
-function post_user($ip)
-{
-    //set the directory for the webpage
-    $dir = dirname(__FILE__);
-
-    //set the directory for the cookie using defined document root var
-    $cookie_file_path = "C://temp/cookie-".$ip.".txt";
-
-
-    $ch = curl_init();
-
-    // Hvad vil du have retur?
-    //curl_setopt($ch, CURLOPT_HEADER, false);
-    //curl_setopt($ch, CURLOPT_URL, $url);
-
-    // Verificer SSL-certifikat?
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-    // Hvilken fil skal vi gemme cookies i?
-    curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file_path);
-    curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file_path );
-
-
-    // Drop det her
-    //set the cookie the site has for certain features, this is optional
-    //curl_setopt($ch, CURLOPT_COOKIE, "cookiename=0");
-
-    // Set browser
-    curl_setopt($ch, CURLOPT_USERAGENT,
-        "Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.12) Gecko/20050915 Firefox/1.0.7");
-
-    // Skal curl_exec() returnerer indholdet eller printe det?
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch,CURLOPT_HTTPHEADER,array("Expect:  "));
-    // Hvis vi modtager en header("Location: http://www.bla.dk")
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-
-    curl_setopt($ch, CURLOPT_POST, 0);
-    //page with the content I want to grab
-    curl_setopt($ch, CURLOPT_URL, $graf_to_get);
-    //do stuff with the info with DomDocument() etc
-    $html = curl_exec($ch);
-    curl_close($ch);
-     
-    var_dump($html);
-}
-
-// --------------------------------------------------------- //
-// Vis GUI
-// --------------------------------------------------------- //
-function vis_gui()
-{
-	?>
-	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
-	<link rel="stylesheet" type="text/css" href="/user-maker/css/simple.css">
-	<?php
-	/*
-	<form action="" method="post">
-		Server:<br>
-		<input type="text" name="server" placeholder="Indtast ip eller domæne"><br>
-		Username:<br>
-		<input type="text" name="username" placeholder="pfsense admin username"><br>
-		Password:<br>
-		<input type="password" name="password" placeholder="pfsense admin password"><br>
-		Username prefix:<br>
-		<input type="text" name="prefix" placeholder="Prefix f.eks tgvlan -> tgvlan1, tgvlan2"><br>
-		<input type="checkbox" name="delete-users">Slet brugere før opret<br>
-		(Som standard bibeholdes brugere oprettet)<br>
-		<input type="checkbox" checked name="delete-users">Tilføj password til kommentar<br>
-		(Som standard skrivers brugens kode i kommentar feldet)
-	</form>
-	*/
-	?>
-
-	<div>
-		<form class="pure-form pure-form-aligned">
-		    <fieldset>
-		    	<div class="pure-control-group">
-		            <label for="server">Server</label>
-		            <input id="server" type="text" placeholder="Type server ip or domain">
-		            <span class="pure-form-message-inline">This is a required field.</span>
-		        </div>
-
-		        <div class="pure-control-group">
-		            <label for="name">Username</label>
-		            <input id="name" type="text" placeholder="Username">
-		            <span class="pure-form-message-inline">This is a required field.</span>
-		        </div>
-
-		        <div class="pure-control-group">
-		            <label for="password">Password</label>
-		            <input id="password" type="password" placeholder="Password">
-		            <span class="pure-form-message-inline">This is a required field.</span>
-		        </div>
-
-		        <div class="pure-control-group">
-		            <label for="prefix">Prefix</label>
-		            <input id="prefix" type="text" placeholder="Add username prefix e.g. tgvlan">
-		            <span class="pure-form-message-inline">This is a required field.</span>
-		        </div>
-
-		        <div class="pure-controls">
-		            <label for="cb" class="pure-checkbox">
-		                <input id="cb" type="checkbox"> I've read the terms and conditions
-		            </label>
-
-		            <label for="cb" class="pure-checkbox">
-		                <input id="cb" type="checkbox"> I've read the terms and conditions
-		            </label>
-
-		            <button type="submit" class="pure-button pure-button-primary">Submit</button>
-		        </div>
-		    </fieldset>
-		</form>
-	</div>
-	<?php
+				            <button type="submit" class="pure-button pure-button-primary">Submit</button>
+				        </div>
+				    </fieldset>
+				</form>
+			</div>
+		</div>
+		<?php
+	}
 }
 
 
