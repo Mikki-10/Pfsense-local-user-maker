@@ -12,15 +12,21 @@ include "funktioner.php";
 
 if ($_POST != NULL) 
 {
-    //Modtag indput
-	//Behandel
-		//Mangler nogle input
-			//Vis tart GUI
+    var_dump($_POST);
+
+    $pfsense = new pfsense;
+    $pfsense->login($_POST["server"], $_POST["username"], $_POST["password"]);
+    if (isset($_POST["delete_users"])) 
+    {
+        //Slet brugere
+    }
+    $pfsense->make_user($_POST["server"], $_POST["prefix"], isset($_POST["password_as_comment"]));
 	//Vis resultat
 }
 else
 {
-	vis_gui();
+	$gui = new gui;
+    $gui->show_form();
 }
 
 
