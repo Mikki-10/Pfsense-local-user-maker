@@ -4,6 +4,32 @@
     left: 50%;
     margin-top: -50px;
     margin-left: -50px;
-    width: 100px;
-    height: 100px;
+    width: 550px;
+    height: 550px;
+}
+
+.Aligner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Aligner-item.old {
+  max-width: 50%;
+}
+
+.Aligner-item {
+  max-width: 50%;
+  position: absolute;
+  top: 50%;
+  margin-top: -137.32025px;
+  margin-left: -50px;
+}
+
+.Aligner-item--top {
+  align-self: flex-start;
+}
+
+.Aligner-item--bottom {
+  align-self: flex-end;
 }
