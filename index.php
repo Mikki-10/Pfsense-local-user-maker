@@ -8,6 +8,7 @@
 
 ini_set("display_errors", true);
 
+include "config.php";
 include "funktioner.php";
 
 if ($_POST != NULL) 
