@@ -8,7 +8,6 @@
 
 ini_set("display_errors", true);
 
-//include "config.php";
 include "functions.php";
 
 $gui = new gui;
