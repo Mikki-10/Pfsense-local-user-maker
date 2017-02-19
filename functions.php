@@ -202,13 +202,10 @@ class pfsense
 	        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $postinfo);
 	        curl_exec($this->ch);
 
-	        $curl_info = curl_getinfo($this->ch);
-
 	        //$users[$i] = array($username, $password);
 	        $users[$i-1] = array(
 	        					'username' 	=> $username,
 	        					'password' 	=> $password,
-	        					'http_code'	=> $curl_info["http_code"]
 	        					);
         }
 
@@ -355,7 +352,7 @@ class gui
 	{
 		if ($output_format == "json") 
 		{
-			# code...
+			echo json_encode($users);
 		}
 		elseif ($output_format == "print") 
 		{
