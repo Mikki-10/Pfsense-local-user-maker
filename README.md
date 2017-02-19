@@ -15,5 +15,4 @@ A php webserver with:
 
 # FAG
 File uploads do not work?
-
 Be sure that php have write access to the "uploads" folder
