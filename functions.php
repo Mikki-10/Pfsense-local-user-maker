@@ -243,12 +243,15 @@ class gui
 	// --------------------------------------------------------- //
 	function show_form($only_delete_users = false)
 	{
+		$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+		//var_dump($lang);
 		?>
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
 		<link rel="stylesheet" type="text/css" href="/user-maker/css/simple.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
 		<div class="Aligner">
 			<div class="Aligner-item">
-				<form class="pure-form pure-form-aligned" method="post">
+				<form id="from-1" enctype="multipart/form-data" class="pure-form pure-form-aligned" method="post">
 				    <fieldset>
 				        <?php
 
@@ -301,13 +304,43 @@ class gui
 				        </div>
 
 				        <div class="pure-controls" style="margin-top: 0px;">
-				            <label for="cb" class="pure-checkbox">
-				                <input name="delete-users" id="cb" type="checkbox" checked> Delete all local users whit prefix
+				            <label for="cb1" class="pure-checkbox">
+				                <input name="delete-users" id="cb1" type="checkbox" checked> Delete all local users with prefix
 				            </label>
 
-				            <label for="cb" class="pure-checkbox">
-				                <input name="password-as-comment" id="cb" type="checkbox" checked> Add user password as comment
+				            <label for="cb2" class="pure-checkbox">
+				                <input name="password-as-comment" id="cb2" type="checkbox" checked> Add user password as comment
 				            </label>
+
+				            <?php
+				            if ($lang == "da") 
+				            {
+				            	?>
+				            	<label for="rd3" class="pure-radio">
+						        	<input type="radio" id="rd3" name="lang" value="da" checked> Dansk
+						        	<input type="radio" id="rd3" name="lang" value="en"> English
+		  						</label>
+		  						<?php
+				            }
+				            else
+				            {
+								?>
+				            	<label for="rd3" class="pure-radio">
+						        	<input type="radio" id="rd3" name="lang" value="da"> Dansk
+						        	<input type="radio" id="rd3" name="lang" value="en" checked> English
+		  						</label>
+		  						<?php
+				            }
+				            ?>
+				            <label for="rd2" class="pure-radio">
+					        	<input type="radio" id="rd2" name="output-format" value="print" checked> Print
+					        	<input type="radio" id="rd4" name="output-format" value="json"> json<br>
+					        	<div id='show-me'>
+						        	<input type="file" name="upfile" accept="image/jpeg, image/png" id="selectedFile" style="display: none;" />
+									<input type="button" value="Background" onclick="document.getElementById('selectedFile').click();" /><br>
+									<a href="template.png">Template png</a> <a href="template.psd">Template psd</a>
+								</div>
+	  						</label>
 
 				            <button type="submit" name="submit" class="pure-button pure-button-primary">Submit</button>
 				            <button type="submit" name="only-delete-users" class="pure-button pure-button-primary">Only delete users</button>
@@ -317,6 +350,228 @@ class gui
 			</div>
 		</div>
 		<?php
+	}
+	function print($output_format = "json", $users)
+	{
+		if ($output_format == "json") 
+		{
+			# code...
+		}
+		elseif ($output_format == "print") 
+		{
+			//echo "<pre>"; var_dump($_FILES); echo "</pre>";
+			try 
+			{
+			    // Undefined | Multiple Files | $_FILES Corruption Attack
+			    // If this request falls under any of them, treat it invalid.
+			    if (
+			        !isset($_FILES['upfile']['error']) ||
+			        is_array($_FILES['upfile']['error'])
+			    ) {
+			        throw new RuntimeException('Invalid parameters.');
+			    }
+
+			    // Check $_FILES['upfile']['error'] value.
+			    switch ($_FILES['upfile']['error']) {
+			        case UPLOAD_ERR_OK:
+			            break;
+			        case UPLOAD_ERR_NO_FILE:
+			            throw new RuntimeException('No file sent.');
+			        case UPLOAD_ERR_INI_SIZE:
+			        case UPLOAD_ERR_FORM_SIZE:
+			            throw new RuntimeException('Exceeded filesize limit.');
+			        default:
+			            throw new RuntimeException('Unknown errors.');
+			    }
+
+			    // You should also check filesize here. 
+			    if ($_FILES['upfile']['size'] > 1000000) {
+			        throw new RuntimeException('Exceeded filesize limit.');
+			    }
+
+			    // DO NOT TRUST $_FILES['upfile']['mime'] VALUE !!
+			    // Check MIME Type by yourself.
+			    $finfo = new finfo(FILEINFO_MIME_TYPE);
+			    if (false === $ext = array_search(
+			        $finfo->file($_FILES['upfile']['tmp_name']),
+			        array(
+			            'jpg' => 'image/jpeg',
+			            'png' => 'image/png',
+			            'gif' => 'image/gif',
+			        ),
+			        true
+			    )) {
+			        throw new RuntimeException('Invalid file format.');
+			    }
+
+			    // You should name it uniquely.
+			    // DO NOT USE $_FILES['upfile']['name'] WITHOUT ANY VALIDATION !!
+			    // On this example, obtain safe unique name from its binary data.
+			    $new_file_name = sha1_file($_FILES['upfile']['tmp_name']) . "." . $ext;
+			    if (!move_uploaded_file($_FILES['upfile']['tmp_name'],'./uploads/' . $new_file_name)) 
+			    {
+			        throw new RuntimeException('Failed to move uploaded file.');
+			    }
+
+			    //echo 'File is uploaded successfully.';
+
+			} catch (RuntimeException $e) {
+
+			    //echo $e->getMessage();
+
+			}
+
+			?>
+			<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+			<style type="text/css">
+			    body {
+			        margin: 0;
+			        padding: 0;
+			        background-color: #FFFFFF;
+			        font: 10pt "Open Sans";
+			    }
+			    * {
+			        box-sizing: border-box;
+			        -moz-box-sizing: border-box;
+			    }
+			    .page {
+			        width: 21cm;
+			        /*min-height: 29.7cm;*/
+			        height: 296mm;
+			        /*padding: 2cm;*/
+
+			        padding-top: 1cm;
+				    padding-right: 1.4cm;
+				    padding-bottom: 1cm;
+				    padding-left: 1.4cm;
+
+			        margin: 1cm auto;
+			        border: 1px #D3D3D3 solid;
+			        border-radius: 5px;
+			        background: white;
+			        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+			    }
+			    .subpage {
+			        /*padding: 1cm;*/
+			        /*padding-top: 1cm;
+				    padding-right: 1cm;
+				    padding-bottom: 0px;
+				    padding-left: 1cm;*/
+			        /*border: 5px red solid;*/
+			        height: 128mm;
+			        /*outline: 2cm #FFEAEA solid;*/
+
+			        text-align: center;
+			        padding-top: 8.5cm;
+
+			        <?php
+			        if (isset($new_file_name)) 
+			        {
+			        	echo 'background-image: url("uploads/'.$new_file_name.'");';
+			        }
+			        else
+			        {
+			        	echo 'background-image: url("template.png");';
+			        }
+			        ?>
+
+			        background-size: contain;
+			        background-repeat:no-repeat;
+			    }
+			    
+			    @page {
+			        size: A4;
+			        margin: 0;
+			    }
+			    @media print {
+			        .page {
+			            margin: 0;
+			            border: initial;
+			            border-radius: initial;
+			            width: initial;
+			            min-height: initial;
+			            box-shadow: initial;
+			            background: initial;
+			            page-break-after: always;
+			        }
+			    }
+			</style>
+			<div class="book">
+				<?php
+				foreach ($users as $key => $user) 
+				{
+					if ($key % 2 == 0) 
+					{
+						//print "It's even";
+						// 0, 2, 4, 6, 8, 10
+						?>
+							 <div class="page">
+							 	<div class="subpage">
+							 	<?php
+						        if ((isset($_POST["lang"]) && $_POST["lang"] == "da") || (isset($_GET["lang"]) && $_GET["lang"] == "da")) 
+						        {
+						        	?>
+						        	Brugernavn: <?php echo $user["username"] ?><br>
+						        	Kode: <?php echo $user["password"] ?><br>
+						        	Problemer med at få login siden?<br>
+						        	Deaktiver Hamachi og/eller sæt DNS til standard<br>
+						        	<?php
+						        }
+						        else 
+						        {
+						        	?>
+						        	Username: <?php echo $user["username"] ?><br>
+						        	Password: <?php echo $user["password"] ?><br>
+						        	Not getting the login page?<br>
+						        	Disable Hamachi and/or set the DNS to the default<br>
+						        	<?php
+						        }
+						        ?>
+						      	</div>
+						<?php
+					}
+					elseif ($key % 2 != 0) 
+					{
+						//print "It's odd";
+						// 1, 3, 5, 7, 9
+						?>
+								&nbsp
+						        <p style="border-style: dashed; border-width: 1px;"> </p>
+						        &nbsp
+								<div class="subpage">
+								<?php
+						        if ((isset($_POST["lang"]) && $_POST["lang"] == "da") || (isset($_GET["lang"]) && $_GET["lang"] == "da")) 
+						        {
+						        	?>
+						        	Brugernavn: <?php echo $user["username"] ?><br>
+						        	Kode: <?php echo $user["password"] ?><br>
+						        	Problemer med at få login siden?<br>
+						        	Deaktiver Hamachi og/eller sæt DNS til standard<br>
+						        	<?php
+						        }
+						        else 
+						        {
+						        	?>
+						        	Username: <?php echo $user["username"] ?><br>
+						        	Password: <?php echo $user["password"] ?><br>
+						        	Not getting the login page?<br>
+						        	Disable Hamachi and/or set the DNS to the default<br>
+						        	<?php
+						        }
+						        ?>
+						    	</div>
+						   	</div>
+						<?php
+					}
+				}
+				?>
+			</div>
+			<?php
+		}
+		else
+		{
+			echo "Format not supported";
+		}
 	}
 }
 
