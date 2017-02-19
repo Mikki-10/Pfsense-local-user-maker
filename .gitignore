@@ -1,0 +1,4 @@
+*.sublime*
+
+# exclude everything
+uploads/*
