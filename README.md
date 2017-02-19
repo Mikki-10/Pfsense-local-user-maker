@@ -19,7 +19,7 @@ A php webserver with:
 
 3) Have fun
 
-# FAG
+# FAQ
 File uploads do not work?
 
 Be sure that php have write access to the "uploads" folder
