@@ -385,7 +385,7 @@ class gui
 			    }
 
 			    // You should also check filesize here. 
-			    if ($_FILES['upfile']['size'] > 1000000) {
+			    if ($_FILES['upfile']['size'] > 10000000) {
 			        throw new RuntimeException('Exceeded filesize limit.');
 			    }
 
@@ -566,6 +566,7 @@ class gui
 				}
 				?>
 			</div>
+			<script>window.print();</script>
 			<?php
 		}
 		else
