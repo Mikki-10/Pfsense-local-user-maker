@@ -50,7 +50,7 @@ if ($_POST != NULL)
         }
         */
 
-        $gui->print($_POST["output-format"], $users);
+        $gui->page_print($_POST["output-format"], $users);
     }
 }
 else

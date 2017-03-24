@@ -348,7 +348,7 @@ class gui
 		</div>
 		<?php
 	}
-	function print($output_format = "json", $users)
+	function page_print($output_format = "json", $users)
 	{
 		if ($output_format == "json") 
 		{
