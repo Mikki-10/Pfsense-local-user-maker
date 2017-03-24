@@ -1,5 +1,6 @@
 # Pfsense-local-user-maker
 A php script to make local users in pfsense, e.g. for use of captive portal where radius server, is not possible or overkill
+[![Build Status](https://travis-ci.org/Mikki-10/Pfsense-local-user-maker.svg?branch=master)](https://travis-ci.org/Mikki-10/Pfsense-local-user-maker)
 
 # What you need
 A php webserver with:
