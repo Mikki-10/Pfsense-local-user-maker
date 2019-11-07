@@ -22,7 +22,7 @@ class pfsense
 {
     function __construct($server, $http_https)
     {
-        $this->server = $http_https . "://". $server;
+        $this->server = $http_https . "://" . $server;
 
         $this->ch = curl_init();
 
@@ -58,7 +58,7 @@ class pfsense
 
         // Skal curl_exec() returnerer indholdet eller printe det?
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($this->ch,CURLOPT_HTTPHEADER,array("Expect:  "));
+        curl_setopt($this->ch, CURLOPT_HTTPHEADER, array("Expect:  "));
         // Hvis vi modtager en header("Location: http://www.bla.dk")
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, 1);
     }
@@ -66,11 +66,11 @@ class pfsense
     function login($username, $password)
     {
         //login form action url
-        $url= $this->server ."/index.php";
+        $url = $this->server . "/index.php";
 
         curl_setopt($this->ch, CURLOPT_POST, 0);
-        curl_setopt($this->ch, CURLOPT_URL,$url);
-        $html=curl_exec($this->ch);
+        curl_setopt($this->ch, CURLOPT_URL, $url);
+        $html = curl_exec($this->ch);
         //$ting = htmlentities($html);
 
         //Tag kun csrf keyen
@@ -103,11 +103,11 @@ class pfsense
 
     function delete_users($prefix)
     {
-        $url = $this->server ."/system_usermanager.php";
+        $url = $this->server . "/system_usermanager.php";
 
         curl_setopt($this->ch, CURLOPT_URL, $url);
         curl_setopt($this->ch, CURLOPT_POST, 0);
-        $html=curl_exec($this->ch);
+        $html = curl_exec($this->ch);
 
         $getcsrf = scrape_between($html, "<input type='hidden' name='__csrf_magic' value=\"", '" />');
 
@@ -193,14 +193,14 @@ class pfsense
 
         $users = NULL;
 
-        for ($i=1; $i < $user_amount+1; $i++) 
+        for ($i = 1; $i < $user_amount + 1; $i++) 
         { 
             //Find real url
-            $url = $this->server ."/system_usermanager.php?act=new";
+            $url = $this->server . "/system_usermanager.php?act=new";
 
             curl_setopt($this->ch, CURLOPT_POST, 0);
-            curl_setopt($this->ch, CURLOPT_URL,$url);
-            $result=curl_exec($this->ch);
+            curl_setopt($this->ch, CURLOPT_URL, $url);
+            $result = curl_exec($this->ch);
             $ting = htmlentities($result);
 
             //Tag kun csrf keyen
@@ -214,7 +214,7 @@ class pfsense
             curl_setopt($this->ch, CURLOPT_POST, 1);
 
             $username = $prefix . $i;
-            $password = mt_rand(100000,999999);
+            $password = mt_rand(100000, 999999);
 
             //$postinfo = "usernamefld=".$username."&passwordfld=".$password."&__csrf_magic=".$getcsrf;
             if ($password_as_comment == "true") 
@@ -266,7 +266,7 @@ class pfsense
             //curl_close ($ch);
 
             //$users[$i] = array($username, $password);
-            $users[$i-1] = array(
+            $users[$i - 1] = array(
                                 'username' 	=> $username,
                                 'password' 	=> $password,
                                 );
@@ -319,7 +319,7 @@ class gui
                         {
                             ?>
 				        	<div class="pure-controls" style="margin-top: 0px;">
-				            	<b style="color:#FF0000">&nbspUsers deleted (prefix<?php if(isset($_POST["prefix"]) == true && $_POST["prefix"] != "") { echo " " . $_POST["prefix"]; } ?>)</b>
+				            	<b style="color:#FF0000">&nbspUsers deleted (prefix<?php if (isset($_POST["prefix"]) == true && $_POST["prefix"] != "") { echo " " . $_POST["prefix"]; } ?>)</b>
 				        	</div>
 				        	<?php
                         }
@@ -468,7 +468,7 @@ class gui
                 // DO NOT USE $_FILES['upfile']['name'] WITHOUT ANY VALIDATION !!
                 // On this example, obtain safe unique name from its binary data.
                 $new_file_name = sha1_file($_FILES['upfile']['tmp_name']) . "." . $ext;
-                if (!move_uploaded_file($_FILES['upfile']['tmp_name'],'./uploads/' . $new_file_name)) 
+                if (!move_uploaded_file($_FILES['upfile']['tmp_name'], './uploads/' . $new_file_name)) 
                 {
                     throw new RuntimeException('Failed to move uploaded file.');
                 }
@@ -527,7 +527,7 @@ class gui
 			        <?php
                     if (isset($new_file_name)) 
                     {
-                        echo 'background-image: url("uploads/'.$new_file_name.'");';
+                        echo 'background-image: url("uploads/' . $new_file_name . '");';
                     }
                     else
                     {
@@ -644,10 +644,10 @@ class gui
 function scrape_between($data, $start, $end)
 {
     $data = stristr($data, $start); // Stripping all data from before $start
-    $data = substr($data, strlen($start));  // Stripping $start
-    $stop = stripos($data, $end);   // Getting the position of the $end of the data to scrape
-    $data = substr($data, 0, $stop);    // Stripping all data from after and including the $end of the data to scrape
-    return $data;  // Returning the scraped data from the function
+    $data = substr($data, strlen($start)); // Stripping $start
+    $stop = stripos($data, $end); // Getting the position of the $end of the data to scrape
+    $data = substr($data, 0, $stop); // Stripping all data from after and including the $end of the data to scrape
+    return $data; // Returning the scraped data from the function
 }
 
 // --------------------------------------------------------- //
@@ -658,9 +658,9 @@ function scrape_to($data, $end)
 {
     //$data = stristr($data, $start); // Stripping all data from before $start
     //$data = substr($data, strlen($start));  // Stripping $start
-    $stop = stripos($data, $end);   // Getting the position of the $end of the data to scrape
-    $data = substr($data, 0, $stop);    // Stripping all data from after and including the $end of the data to scrape
-    return $data;  // Returning the scraped data from the function
+    $stop = stripos($data, $end); // Getting the position of the $end of the data to scrape
+    $data = substr($data, 0, $stop); // Stripping all data from after and including the $end of the data to scrape
+    return $data; // Returning the scraped data from the function
 }
 
 // --------------------------------------------------------- //
@@ -670,10 +670,10 @@ function scrape_to($data, $end)
 function scrape_from($data, $start)
 {
     $data = stristr($data, $start); // Stripping all data from before $start
-    $data = substr($data, strlen($start));  // Stripping $start
+    $data = substr($data, strlen($start)); // Stripping $start
     //$stop = stripos($data, $end);   // Getting the position of the $end of the data to scrape
     //$data = substr($data, 0, $stop);    // Stripping all data from after and including the $end of the data to scrape
-    return $data;  // Returning the scraped data from the function
+    return $data; // Returning the scraped data from the function
 }
 
 ?>
