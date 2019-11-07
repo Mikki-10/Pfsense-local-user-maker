@@ -91,7 +91,7 @@ class pfsense
 	                'usernamefld'  	=> $username,
 	                'passwordfld' 	=> $password,
 	                '__csrf_magic'  => $getcsrf,
-	                'login' => "Login"
+	                'login' => "Sign In"
 	            );
 
 	        //curl_setopt($this->ch, CURLOPT_REFERER, $_SERVER['REQUEST_URI']);
@@ -108,6 +108,8 @@ class pfsense
 		curl_setopt($this->ch, CURLOPT_URL, $url);
 	    curl_setopt($this->ch, CURLOPT_POST, 0);
 	    $html=curl_exec($this->ch);
+
+	    $getcsrf = scrape_between($html, "<input type='hidden' name='__csrf_magic' value=\"", '" />');
 
 		preg_match_all("/act=deluser.*\"/", $html, $output_array);
 
@@ -139,14 +141,23 @@ class pfsense
 
 			foreach (array_reverse($users) as $key => $user) 
 			{
-				$url = $this->server . "/system_usermanager.php?act=deluser&userid=" . $user["userid"] . "&username=" . $user["username"];
+				//$url = $this->server . "/system_usermanager.php?act=deluser&userid=" . $user["userid"] . "&username=" . $user["username"] . "&__csrf_magic=" . $getcsrf;
+				$url = $this->server . "/system_usermanager.php";
+
+				$postinfo = array(
+	                '__csrf_magic'  => $getcsrf,
+	                'act'  	=> "deluser",
+	                'userid' 	=> $user["userid"],
+	                'username' 	=> $user["username"],
+	            );
 
 				//echo $url . "<br>";
 
 				curl_setopt($this->ch, CURLOPT_URL, $url);
-				curl_setopt($this->ch, CURLOPT_POST, 0);
-			    $html=curl_exec($this->ch);
-			}
+				curl_setopt($this->ch, CURLOPT_POST, 1);
+			    curl_setopt($this->ch, CURLOPT_POSTFIELDS, $postinfo);
+	        	curl_exec($this->ch);			
+	    	}
 		}
 		else
 		{
@@ -160,6 +171,7 @@ class pfsense
 	// --------------------------------------------------------- //
 	function make_user($prefix, $user_amount, $password_as_comment = "false")
 	{
+	    /*
 	    //Find real url
 	    $url = $this->server ."/system_usermanager.php?act=new";
 
@@ -169,17 +181,38 @@ class pfsense
 	    $ting = htmlentities($result);
 
 	    //Tag kun csrf keyen
-	    $getcsrf = scrape_between($result, "<input type='hidden' name='__csrf_magic' value=\"", '" />');
+	    $getcsrf = scrape_between($result, '<script type="text/javascript">var csrfMagicToken = "', '"');
+
+	    echo "<pre>"; var_dump($getcsrf); echo "</pre>";
 
 	    curl_setopt($this->ch, CURLOPT_URL, $url);
 	    //do stuff with the info with DomDocument() etc
 	    //curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($this->ch, CURLOPT_POST, 1);
+        */
 
         $users = NULL;
 
         for ($i=1; $i < $user_amount+1; $i++) 
         { 
+        	//Find real url
+		    $url = $this->server ."/system_usermanager.php?act=new";
+
+		    curl_setopt($this->ch, CURLOPT_POST, 0);
+		    curl_setopt($this->ch, CURLOPT_URL,$url);
+		    $result=curl_exec($this->ch);
+		    $ting = htmlentities($result);
+
+		    //Tag kun csrf keyen
+		    $getcsrf = scrape_between($result, '<script type="text/javascript">var csrfMagicToken = "', '"');
+
+		    //echo "<pre>"; var_dump($getcsrf); echo "</pre>";
+
+		    curl_setopt($this->ch, CURLOPT_URL, $url);
+		    //do stuff with the info with DomDocument() etc
+		    //curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "POST");
+	        curl_setopt($this->ch, CURLOPT_POST, 1);
+
         	$username = $prefix . $i;
         	$password = mt_rand(100000,999999);
 
@@ -194,6 +227,8 @@ class pfsense
 	                'descr' 		=> "Password: " . $password,
 	                'utype' 		=> "user",
 	                'save' 			=> "Save",
+	                'webguicss' 	=> "pfSense.css",
+	                'dashboardcolumns' =>  "2",
 	            );
 	        }
 	        else
@@ -205,12 +240,30 @@ class pfsense
 	                'passwordfld2' 	=> $password,
 	                'utype' 		=> "user",
 	                'save' 			=> "Save",
+	                'webguicss' 	=> "pfSense.css",
+	                'dashboardcolumns' =>  "2",
 	            );
 	        }
 
 	        //curl_setopt($this->ch, CURLOPT_REFERER, $_SERVER['REQUEST_URI']);
+	        curl_setopt($this->ch, CURLOPT_URL, $url);
+			curl_setopt($this->ch, CURLOPT_POST, 1);
 	        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $postinfo);
-	        curl_exec($this->ch);
+	        //curl_exec($this->ch);
+
+	        $result = curl_exec($this->ch);
+	        //echo "<pre>"; var_dump($result); echo "</pre>";
+	        
+			if (curl_errno($this->ch) && curl_errno($this->ch) == 0) 
+			{
+			    if (curl_error($this->ch) != "") 
+			    {
+			    	die('CURL Error: ' . curl_error($this->ch));
+			    }
+			}
+			
+
+			//curl_close ($ch);
 
 	        //$users[$i] = array($username, $password);
 	        $users[$i-1] = array(
